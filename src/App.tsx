@@ -14,7 +14,7 @@ export const App = () => {
   const [todos, setTodos] = useState<Todo[]>(
     todosFromServer.map(todo => ({
       ...todo,
-      userData: usersFromServer.find(user => user.id === todo.userId) as User,
+      userData: usersFromServer.find(user => user.id === todo.userId)!,
     })),
   );
   const [errorStatusTitle, setErrorStatusTitle] = useState(false);
@@ -31,28 +31,6 @@ export const App = () => {
     setErrorStatusUserId(isUserIdInvalid);
 
     return isTitleInvalid || isUserIdInvalid;
-    // if (!isTitleValid && !isUserIdValid) {
-    //   setErrorStatusTitle(true);
-    //   setErrorStatusUserId(true);
-
-    //   return true;
-    // }
-
-    // if (!isUserIdValid && isTitleValid) {
-    //   setErrorStatusUserId(true);
-    //   setErrorStatusTitle(false);
-
-    //   return true;
-    // }
-
-    // if (isUserIdValid && !isTitleValid) {
-    //   setErrorStatusUserId(false);
-    //   setErrorStatusTitle(true);
-
-    //   return true;
-    // }
-
-    // return false;
   }
 
   const handleAddTodo = (todo: Todo) => {
@@ -67,11 +45,12 @@ export const App = () => {
     }
 
     const newTodo: Todo = {
-      id: todos.length > 0 ? Math.max(...todos.map(todoId => todoId.id)) + 1 : 1,
+      id:
+        todos.length > 0 ? Math.max(...todos.map(todo => todo.id)) + 1 : 1,
       title,
       completed: false,
       userId,
-      userData: users.find(user => user.id === userId) as User,
+      userData: users.find(user => user.id === userId)!,
     };
 
     handleAddTodo(newTodo);
@@ -95,7 +74,7 @@ export const App = () => {
               placeholder="Enter a title"
               value={title}
               onChange={event => {
-                setTitle(event.target.value)
+                setTitle(event.target.value);
                 setErrorStatusTitle(false);
               }}
             />
