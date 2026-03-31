@@ -1,64 +1,70 @@
-// import users from './api/users';
 import './App.scss';
 
-import { UserInfo } from './components/UserInfo/UserInfo';
-import {TodoList} from './components/TodoList/TodoList';
-// import { TodoInfo } from './components/TodoInfo/TodoInfo';
+import { TodoList } from './components/TodoList/TodoList';
 
 import usersFromServer from './api/users';
 import todosFromServer from './api/todos';
 import { useState } from 'react';
 import { Todo, User } from './types/types';
-import { is } from 'cypress/types/bluebird';
-// import { event } from 'cypress/types/jquery';
 
 export const App = () => {
   const [title, setTitle] = useState('');
   const [userId, setUserId] = useState(0);
   const [users] = useState<User[]>(usersFromServer);
-  const [todos, setTodos] = useState<Todo[]>(todosFromServer);
+  const [todos, setTodos] = useState<Todo[]>(
+    todosFromServer.map(todo => ({
+      ...todo,
+      userData: usersFromServer.find(user => user.id === todo.userId) as User,
+    })),
+  );
   const [errorStatusTitle, setErrorStatusTitle] = useState(false);
   const [errorStatusUserId, setErrorStatusUserId] = useState(false);
 
   const isTitleValid = title.trim() !== '';
   const isUserIdValid = userId !== 0;
 
-  function isFormDataValid() {
+  function isFormInvalid() {
     if (!isTitleValid && !isUserIdValid) {
       setErrorStatusTitle(true);
       setErrorStatusUserId(true);
+
       return true;
     }
 
     if (!isUserIdValid && isTitleValid) {
       setErrorStatusUserId(true);
       setErrorStatusTitle(false);
+
       return true;
     }
 
     if (isUserIdValid && !isTitleValid) {
       setErrorStatusUserId(false);
       setErrorStatusTitle(true);
+
       return true;
     }
+
+    return false;
   }
 
   const handleAddTodo = (todo: Todo) => {
     setTodos([...todos, todo]);
-  }
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (isFormDataValid()) {
+    if (isFormInvalid()) {
       return;
     }
 
     const newTodo: Todo = {
-      id: todos.length > 0 ? Math.max(...todos.map(t => t.id)) + 1 : 1,
+      id: todos.length > 0 ? Math.max(...todos.map(td => td.id)) + 1 : 1,
       title,
       completed: false,
-      userId: userId,
+      userId,
+      userData: users.find(user => user.id === userId) as User,
     };
 
     handleAddTodo(newTodo);
@@ -66,9 +72,7 @@ export const App = () => {
     setErrorStatusTitle(false);
     setTitle('');
     setUserId(0);
-    console.log(todos);
-
-  }
+  };
 
   return (
     <div className="App">
@@ -97,19 +101,16 @@ export const App = () => {
             <select
               data-cy="userSelect"
               value={userId}
-              onChange={(event) => setUserId(+(event.target.value))}
+              onChange={event => {
+                setUserId(+event.target.value);
+                setErrorStatusUserId(false);
+              }}
             >
-              <option
-                value="0"
-                disabled
-              >
+              <option value="0" disabled>
                 Choose a user
               </option>
               {users.map(user => (
-                <option
-                  key={user.id}
-                  value={user.id}
-                >
+                <option key={user.id} value={user.id}>
                   {user.name}
                 </option>
               ))}
@@ -127,7 +128,7 @@ export const App = () => {
       </form>
 
       <section className="TodoList">
-        <TodoList users={users} todos={todos} />
+        <TodoList todos={todos} />
       </section>
     </div>
   );
