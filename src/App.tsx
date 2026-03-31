@@ -24,28 +24,35 @@ export const App = () => {
   const isUserIdValid = userId !== 0;
 
   function isFormInvalid() {
-    if (!isTitleValid && !isUserIdValid) {
-      setErrorStatusTitle(true);
-      setErrorStatusUserId(true);
+    const isTitleInvalid = !isTitleValid;
+    const isUserIdInvalid = !isUserIdValid;
 
-      return true;
-    }
+    setErrorStatusTitle(isTitleInvalid);
+    setErrorStatusUserId(isUserIdInvalid);
 
-    if (!isUserIdValid && isTitleValid) {
-      setErrorStatusUserId(true);
-      setErrorStatusTitle(false);
+    return isTitleInvalid || isUserIdInvalid;
+    // if (!isTitleValid && !isUserIdValid) {
+    //   setErrorStatusTitle(true);
+    //   setErrorStatusUserId(true);
 
-      return true;
-    }
+    //   return true;
+    // }
 
-    if (isUserIdValid && !isTitleValid) {
-      setErrorStatusUserId(false);
-      setErrorStatusTitle(true);
+    // if (!isUserIdValid && isTitleValid) {
+    //   setErrorStatusUserId(true);
+    //   setErrorStatusTitle(false);
 
-      return true;
-    }
+    //   return true;
+    // }
 
-    return false;
+    // if (isUserIdValid && !isTitleValid) {
+    //   setErrorStatusUserId(false);
+    //   setErrorStatusTitle(true);
+
+    //   return true;
+    // }
+
+    // return false;
   }
 
   const handleAddTodo = (todo: Todo) => {
@@ -60,7 +67,7 @@ export const App = () => {
     }
 
     const newTodo: Todo = {
-      id: todos.length > 0 ? Math.max(...todos.map(td => td.id)) + 1 : 1,
+      id: todos.length > 0 ? Math.max(...todos.map(todoId => todoId.id)) + 1 : 1,
       title,
       completed: false,
       userId,
@@ -87,7 +94,10 @@ export const App = () => {
               data-cy="titleInput"
               placeholder="Enter a title"
               value={title}
-              onChange={event => setTitle(event.target.value)}
+              onChange={event => {
+                setTitle(event.target.value)
+                setErrorStatusTitle(false);
+              }}
             />
             <span className="error" hidden={!errorStatusTitle}>
               Please enter a title
