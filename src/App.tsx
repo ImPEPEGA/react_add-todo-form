@@ -14,7 +14,7 @@ export const App = () => {
   const [todos, setTodos] = useState<Todo[]>(
     todosFromServer.map(todo => ({
       ...todo,
-      userData: usersFromServer.find(user => user.id === todo.userId)!,
+      user: usersFromServer.find(user => user.id === todo.userId)!,
     })),
   );
   const [errorStatusTitle, setErrorStatusTitle] = useState(false);
@@ -45,12 +45,11 @@ export const App = () => {
     }
 
     const newTodo: Todo = {
-      id:
-        todos.length > 0 ? Math.max(...todos.map(todo => todo.id)) + 1 : 1,
+      id: todos.length > 0 ? Math.max(...todos.map(todo => todo.id)) + 1 : 1,
       title,
       completed: false,
       userId,
-      userData: users.find(user => user.id === userId)!,
+      user: users.find(user => user.id === userId)!,
     };
 
     handleAddTodo(newTodo);
@@ -78,9 +77,11 @@ export const App = () => {
                 setErrorStatusTitle(false);
               }}
             />
-            <span className="error" hidden={!errorStatusTitle}>
-              Please enter a title
-            </span>
+            {errorStatusTitle && (
+              <span className="error">
+                Please enter a title
+              </span>
+            )}
           </label>
         </div>
 
@@ -106,9 +107,11 @@ export const App = () => {
             </select>
           </label>
 
-          <span className="error" hidden={!errorStatusUserId}>
-            Please choose a user
-          </span>
+          {errorStatusUserId && (
+            <span className="error">
+              Please choose a user
+            </span>
+          )}
         </div>
 
         <button type="submit" data-cy="submitButton">
