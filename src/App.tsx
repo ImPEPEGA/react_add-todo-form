@@ -23,6 +23,22 @@ export const App = () => {
   const isTitleValid = title.trim() !== '';
   const isUserIdValid = userId !== 0;
 
+  const createChangeHandler =
+    <V,>(
+      setValue: React.Dispatch<React.SetStateAction<V>>,
+      setError?: React.Dispatch<React.SetStateAction<boolean>>,
+      transform?: (value: string) => V,
+    ) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const rawValue = event.target.value;
+      const value = transform
+        ? transform(rawValue)
+        : (rawValue as unknown as V);
+
+      setValue(value);
+      setError?.(false);
+    };
+
   function isFormInvalid() {
     const isTitleInvalid = !isTitleValid;
     const isUserIdInvalid = !isUserIdValid;
@@ -72,15 +88,10 @@ export const App = () => {
               data-cy="titleInput"
               placeholder="Enter a title"
               value={title}
-              onChange={event => {
-                setTitle(event.target.value);
-                setErrorStatusTitle(false);
-              }}
+              onChange={createChangeHandler(setTitle, setErrorStatusTitle)}
             />
             {errorStatusTitle && (
-              <span className="error">
-                Please enter a title
-              </span>
+              <span className="error">Please enter a title</span>
             )}
           </label>
         </div>
@@ -91,10 +102,11 @@ export const App = () => {
             <select
               data-cy="userSelect"
               value={userId}
-              onChange={event => {
-                setUserId(+event.target.value);
-                setErrorStatusUserId(false);
-              }}
+              onChange={createChangeHandler(
+                setUserId,
+                setErrorStatusUserId,
+                v => +v,
+              )}
             >
               <option value="0" disabled>
                 Choose a user
@@ -108,9 +120,7 @@ export const App = () => {
           </label>
 
           {errorStatusUserId && (
-            <span className="error">
-              Please choose a user
-            </span>
+            <span className="error">Please choose a user</span>
           )}
         </div>
 
