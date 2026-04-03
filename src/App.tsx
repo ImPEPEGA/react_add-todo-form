@@ -39,22 +39,6 @@ export const App = () => {
     };
   }
 
-  // const createChangeHandler =
-  //     <V,>(
-  //         setValue: React.Dispatch<React.SetStateAction<V>>,
-  //         setError?: React.Dispatch<React.SetStateAction<boolean>>,
-  //         transform?: (value: string) => V,
-  //     ) =>
-  //     (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-  //         const rawValue = event.target.value;
-  //         const value = transform
-  //             ? transform(rawValue)
-  //             : (rawValue as unknown as V);
-
-  //         setValue(value);
-  //         setError?.(false);
-  //     };
-
   function isFormInvalid() {
     const isTitleInvalid = !isTitleValid;
     const isUserIdInvalid = !isUserIdValid;
