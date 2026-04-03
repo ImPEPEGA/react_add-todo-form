@@ -23,13 +23,12 @@ export const App = () => {
   const isTitleValid = title.trim() !== '';
   const isUserIdValid = userId !== 0;
 
-  const createChangeHandler =
-    <V,>(
-      setValue: React.Dispatch<React.SetStateAction<V>>,
-      setError?: React.Dispatch<React.SetStateAction<boolean>>,
-      transform?: (value: string) => V,
-    ) =>
-    (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  function createChangeHandler<V>(
+    setValue: React.Dispatch<React.SetStateAction<V>>,
+    setError?: React.Dispatch<React.SetStateAction<boolean>>,
+    transform?: (value: string) => V,
+  ) {
+    return (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const rawValue = event.target.value;
       const value = transform
         ? transform(rawValue)
@@ -38,6 +37,23 @@ export const App = () => {
       setValue(value);
       setError?.(false);
     };
+  }
+
+  // const createChangeHandler =
+  //     <V,>(
+  //         setValue: React.Dispatch<React.SetStateAction<V>>,
+  //         setError?: React.Dispatch<React.SetStateAction<boolean>>,
+  //         transform?: (value: string) => V,
+  //     ) =>
+  //     (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  //         const rawValue = event.target.value;
+  //         const value = transform
+  //             ? transform(rawValue)
+  //             : (rawValue as unknown as V);
+
+  //         setValue(value);
+  //         setError?.(false);
+  //     };
 
   function isFormInvalid() {
     const isTitleInvalid = !isTitleValid;
